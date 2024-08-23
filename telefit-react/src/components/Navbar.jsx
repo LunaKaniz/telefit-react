@@ -7,12 +7,12 @@ export default function Navbar() {
                 <Link to="/" className="text-2xl text-blue-700 font-bold">TeleFit</Link>
             </div>
             <div className="flex-none">
-                <button type="button" className="bg-blue-700 px-3 py-2 rounded-md text-sm text-white me-2">
+                <Link to="/Login" type="button" className="bg-blue-700 px-3 py-2 rounded-md text-sm text-white me-2">
                     Login
-                </button>
-                <button type="button" className="bg-blue-200 px-3 py-2 rounded-md text-sm text-black">
+                </Link>
+                <Link to ="/Signup" type="button" className="bg-blue-200 px-3 py-2 rounded-md text-sm text-black">
                     Register
-                </button>
+                </Link>
             </div>
         </div>
   )

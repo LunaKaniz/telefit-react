@@ -2,25 +2,33 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Layout from "./layout";
 import Index from "./pages";
 import Bmi from "./pages/Bmi";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
 
 export default function App() {
   return (
     <>
-    <Router>
-      <Layout>
+      <Router>
+        <Layout>
           <Switch>
-
             <Route exact path="/">
-              <Index/>
+              <Index />
             </Route>
 
             <Route exact path="/bmi">
-              <Bmi/>
+              <Bmi />
             </Route>
 
+            <Route exact path="/signup">
+              <Signup />
+            </Route>
+
+            <Route exact path="/login">
+              <Login />
+            </Route>
           </Switch>
-      </Layout>
-    </Router>
+        </Layout>
+      </Router>
     </>
-  )
+  );
 }
