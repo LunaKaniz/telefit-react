@@ -1,3 +1,7 @@
+[build]
+  functions = "netlify/functions"   # Path to Netlify functions directory
+  publish = "dist"                 # Path to the Vite build output directory
+
 [[redirects]]
 from="/*"
 to = "/index.html"

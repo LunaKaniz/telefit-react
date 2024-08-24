@@ -1,11 +1,13 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import react from 'eslint-plugin-react'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
+import js from '@eslint/js';
+import globals from 'globals';
+import react from 'eslint-plugin-react';
+import reactHooks from 'eslint-plugin-react-hooks';
+import node from 'eslint-plugin-node';  // Add Node.js plugin if needed
 
 export default [
-  { ignores: ['dist'] },
+  {
+    ignores: ['dist'],  // Ignore the build directory
+  },
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
@@ -21,7 +23,7 @@ export default [
     plugins: {
       react,
       'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
+      node,  // Include Node.js plugin
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -33,6 +35,24 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
+      // Add Node.js specific rules if needed
     },
   },
-]
+  {
+    files: ['netlify/functions/**/*.js'],  // Target Netlify Functions
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: {
+        ...globals.node,  // Ensure Node.js globals are recognized
+      },
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+      // Add or override rules specific to Node.js functions
+    },
+  },
+];

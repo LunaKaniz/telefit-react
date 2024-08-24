@@ -1,65 +1,48 @@
-import { useState, useEffect } from 'react';
+// CompleteRegistration.jsx - No Node.js-specific modules like `crypto`
+import { useState } from 'react';
+import { useLocation, useHistory } from 'react-router-dom';
 
-const Signup = () => {
-    const [userName, setUserName] = useState('');
+const CompleteRegistration = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState(null);
 
-    useEffect(() => {
-        // Adding the Telegram sign-up script
-        const script = document.createElement('script');
-        script.src = "https://telegram.org/js/telegram-widget.js?7";
-        script.setAttribute('data-telegram-login', import.meta.env.VITE_TELEGRAM_BOT_USERNAME); // Use your bot's username
-        script.setAttribute('data-size', 'large');
-        script.setAttribute('data-radius', '5');
-        script.setAttribute('data-auth-url', '/.netlify/functions/teleSignup'); // Netlify function URL
-        script.setAttribute('data-request-access', 'write');
-        script.async = true;
-        document.getElementById('telegram-signup').appendChild(script);
-    }, []);
+    const location = useLocation();
+    const history = useHistory();
+
+    const userId = new URLSearchParams(location.search).get('userId');
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         try {
-            const response = await fetch('/.netlify/functions/signup', {
+            const response = await fetch('/.netlify/functions/completeRegistration', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ userName, email, password }),
+                body: JSON.stringify({ userId, email, password }),
             });
 
             const data = await response.json();
             if (response.ok) {
-                window.location.href = '/'; // Redirect to the dashboard
+                history.push('/'); // Redirect to dashboard or login after successful registration
             } else {
-                alert(data.error || 'Error during signup.');
+                setError(data.error || 'Error completing registration.');
             }
         } catch (error) {
             console.error('An unexpected error occurred:', error);
-            alert('An unexpected error occurred. Please try again.');
+            setError('An unexpected error occurred. Please try again.');
         }
     };
 
     return (
         <div className="container mx-auto p-4">
-            <h2 className="text-2xl mb-6">Sign Up</h2>
+            <h2 className="text-2xl mb-6">Complete Registration</h2>
+
+            {error && <p className="text-red-500">{error}</p>}
 
             <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                    <label htmlFor="userName" className="block text-gray-700 mb-1">
-                        Name:
-                    </label>
-                    <input
-                        type="text"
-                        id="userName"
-                        value={userName}
-                        onChange={(e) => setUserName(e.target.value)}
-                        className="p-2 border border-gray-300 rounded w-full"
-                        required
-                    />
-                </div>
                 <div>
                     <label htmlFor="email" className="block text-gray-700 mb-1">
                         Email:
@@ -90,13 +73,11 @@ const Signup = () => {
                     type="submit"
                     className="bg-blue-500 text-white w-full py-2 rounded hover:bg-blue-600 transition duration-200"
                 >
-                    Sign Up
+                    Complete Registration
                 </button>
             </form>
-
-            <div id="telegram-signup" className="mt-4"></div>
         </div>
     );
 };
 
-export default Signup;
+export default CompleteRegistration;

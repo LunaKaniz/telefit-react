@@ -4,6 +4,7 @@ import Index from "./pages";
 import Bmi from "./pages/Bmi";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
+import CompleteRegistration from "./components/CompleteRegistration";
 
 export default function App() {
   return (
@@ -18,6 +19,11 @@ export default function App() {
             <Route exact path="/bmi">
               <Bmi />
             </Route>
+
+            <Route
+              path="/complete-registration"
+              component={CompleteRegistration}
+            />
 
             <Route exact path="/signup">
               <Signup />

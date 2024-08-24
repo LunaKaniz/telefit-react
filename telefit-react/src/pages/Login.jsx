@@ -1,87 +1,85 @@
-import  { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 
-const Login = () => {
+export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const history = useHistory();
 
     useEffect(() => {
-        // Adding the Telegram login script
+        // Add Telegram login widget
         const script = document.createElement('script');
         script.src = "https://telegram.org/js/telegram-widget.js?7";
         script.setAttribute('data-telegram-login', import.meta.env.VITE_TELEGRAM_BOT_USERNAME); // Use your bot's username
         script.setAttribute('data-size', 'large');
-        script.setAttribute('data-radius', '5');
-        script.setAttribute('data-auth-url', '/auth/telegram/callback'); // Replace with your auth URL
+        script.setAttribute('data-auth-url', '/.netlify/functions/teleLogin'); // The Netlify function that handles Telegram login
         script.setAttribute('data-request-access', 'write');
         script.async = true;
         document.getElementById('telegram-login').appendChild(script);
     }, []);
 
-    console.log(import.meta.env.REACT_APP_TELEGRAM_BOT_USERNAME);
+    const handleManualLogin = async (event) => {
+        event.preventDefault();
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // Handle login logic here
-        console.log({ email, password });
+        try {
+            const response = await fetch('/.netlify/functions/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
 
-        // Example: Send login request
-        fetch('/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Handle success or error
-            console.log(data);
-        })
-        .catch(error => {
+            if (response.ok) {
+                history.push('/');
+            } else {
+                console.error('Failed to login manually');
+            }
+        } catch (error) {
             console.error('Error logging in:', error);
-        });
+        }
     };
 
     return (
-
-        <section className="main-section">
+        <div className="container mx-auto p-4">
             <h2 className="text-2xl mb-6">Login</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                    <label htmlFor="email" className="block text-gray-700 mb-1">Email:</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        value={email} 
-                        onChange={(e) => setEmail(e.target.value)} 
-                        className="p-2 border border-gray-300 rounded w-full" 
-                        required 
+
+            <form onSubmit={handleManualLogin} className="mb-4">
+                <div className="mb-2">
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                        Email
+                    </label>
+                    <input
+                        type="text"
+                        id="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="p-2 border border-gray-300 rounded w-full"
+                        required
                     />
                 </div>
-                <div>
-                    <label htmlFor="password" className="block text-gray-700 mb-1">Password:</label>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password" 
-                        value={password} 
-                        onChange={(e) => setPassword(e.target.value)} 
-                        className="p-2 border border-gray-300 rounded w-full" 
-                        required 
+                <div className="mb-4">
+                    <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                        Password
+                    </label>
+                    <input
+                        type="password"
+                        id="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="p-2 border border-gray-300 rounded w-full"
+                        required
                     />
                 </div>
-                <button 
-                    type="submit" 
-                    className="bg-blue-500 text-white w-full py-2 rounded hover:bg-blue-600 transition duration-200"
+                <button
+                    type="submit"
+                    className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
                 >
                     Login
                 </button>
             </form>
 
-            <div id="telegram-login" className="mt-4"></div>
-        </section>
+            <div id="telegram-login" className="mt-6"></div>
+        </div>
     );
-};
-
-export default Login;
+}
